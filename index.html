@@ -2,104 +2,272 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description"
+        content="POOKALAM.EXE — A deterministic procedural generative art engine constructing Kerala ceremonial floral Pookalams using pure mathematics, SVG, and code." />
+    <meta name="theme-color" content="#06120c" />
+    <title>POOKALAM.EXE — Generative Onam Engine</title>
 
-    <title>Pookalam.exe</title>
+    <!-- Google Fonts for Modern Geometric Typography -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
 
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style.css" />
 </head>
 
-<body>
+<body class="theme-night">
+    <!-- Ambient Canvas Particle Layer -->
+    <canvas id="pollenLayer" aria-hidden="true"></canvas>
 
-    <div class="app">
+    <div class="app-layout">
+        <!-- TOP HEADER BAR -->
+        <header class="top-header">
+            <!-- Brand / Left -->
+            <div class="brand-block">
+                <div class="brand-icon" aria-hidden="true">
+                    <svg viewBox="0 0 32 32" width="26" height="26" fill="none">
+                        <circle cx="16" cy="16" r="14" stroke="currentColor" stroke-width="1.5" stroke-dasharray="3 3"/>
+                        <path d="M16 4 C18 10, 22 14, 28 16 C22 18, 18 22, 16 28 C14 22, 10 18, 4 16 C10 14, 14 10, 16 4 Z" fill="currentColor"/>
+                        <circle cx="16" cy="16" r="4" fill="#06120c"/>
+                        <circle cx="16" cy="16" r="2" fill="currentColor"/>
+                    </svg>
+                </div>
+                <div class="brand-text">
+                    <h1 class="brand-title">POOKALAM.EXE</h1>
+                    <p class="brand-subtitle">GENERATIVE ONAM ENGINE</p>
+                </div>
+            </div>
 
-        <header class="hero">
-            <div class="badge">ONAM × CODE</div>
+            <!-- Greetings / Center -->
+            <div class="header-center">
+                <div class="greetings-badge">
+                    <span class="ornament-left" aria-hidden="true">✦</span>
+                    <span class="greetings-title">HAPPY ONAM</span>
+                    <span class="ornament-right" aria-hidden="true">✦</span>
+                </div>
+                <p class="greetings-subtitle">Blooming tradition. Crafted in code.</p>
+            </div>
 
-            <h1>Pookalam.exe</h1>
-
-            <p class="subtitle">
-                A procedurally generated digital Pookalam built with code.
-            </p>
+            <!-- Utility Controls / Right -->
+            <div class="utility-controls" aria-label="System utilities">
+                <button id="infoBtn" class="icon-btn" type="button" aria-label="About Pookalam.exe" title="Project Information">
+                    <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
+                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/>
+                    </svg>
+                </button>
+                <button id="soundBtn" class="icon-btn" type="button" aria-label="Toggle Sound" title="Sound Effects">
+                    <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
+                        <path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/>
+                    </svg>
+                </button>
+                <button id="themeBtn" class="icon-btn" type="button" aria-label="Toggle Theme" title="Switch Theme">
+                    <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
+                        <path d="M12 3a9 9 0 109 9c0-.46-.04-.92-.1-1.36a5.389 5.389 0 01-4.4 2.26 5.403 5.403 0 01-3.14-9.8c-.44-.06-.9-.1-1.36-.1z"/>
+                    </svg>
+                </button>
+            </div>
         </header>
 
-        <main class="main-panel">
+        <!-- MAIN 3-COLUMN WORKSPACE -->
+        <main class="main-workspace">
+            <!-- LEFT PANEL: CONTROLS & ALGORITHM -->
+            <aside class="sidebar-panel left-panel">
+                <!-- Generator Controls Card -->
+                <section class="ui-card controls-card" aria-labelledby="controlsTitle">
+                    <h2 id="controlsTitle" class="card-kicker">CONTROLS</h2>
+                    <p class="card-desc">Create unique Pookalams with mathematics, symmetry & code.</p>
 
-            <section class="terminal">
+                    <div class="input-group">
+                        <label for="seedInput" class="input-label">Seed</label>
+                        <div class="input-row">
+                            <input id="seedInput" type="text" value="ONAM-2026" spellcheck="false" autocomplete="off" aria-label="Pattern Seed" />
+                            <button id="seedRandomBtn" class="random-btn" type="button" title="Randomize Seed" aria-label="Randomize Seed">
+                                <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
+                                    <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM7.5 18c-.83 0-1.5-.67-1.5-1.5S6.67 15 7.5 15s1.5.67 1.5 1.5S8.33 18 7.5 18zm0-9C6.67 9 6 8.33 6 7.5S6.67 6 7.5 6 9 6.67 9 7.5 8.33 9 7.5 9zm4.5 4.5c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zm4.5 4.5c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zm0-9c-.83 0-1.5-.67-1.5-1.5S15.67 6 16.5 6s1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"/>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
 
-                <div class="terminal-top">
-                    <span class="dot red"></span>
-                    <span class="dot yellow"></span>
-                    <span class="dot green"></span>
+                    <div class="actions-group">
+                        <button id="generateBtn" class="btn btn-primary" type="button">
+                            <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true">
+                                <path d="M12 2L14.4 9.6L22 12L14.4 14.4L12 22L9.6 14.4L2 12L9.6 9.6L12 2Z"/>
+                            </svg>
+                            <span>GENERATE NEW</span>
+                        </button>
+                        <button id="replayBtn" class="btn btn-secondary" type="button">
+                            <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true">
+                                <path d="M12 5V1L7 6l5 5V7c3.31 0 6 2.69 6 6s-2.69 6-6 6-6-2.69-6-6H4c0 4.42 3.58 8 8 8s8-3.58 8-8-3.58-8-8-8z"/>
+                            </svg>
+                            <span>REPLAY BLOOM</span>
+                        </button>
+                    </div>
+                </section>
 
-                    <span class="terminal-title">
-                        pookalam-engine.exe
-                    </span>
+                <!-- The Algorithm Card -->
+                <section class="ui-card algorithm-card" aria-labelledby="algoTitle">
+                    <h2 id="algoTitle" class="card-kicker">THE ALGORITHM</h2>
+
+                    <div class="formula-group">
+                        <div class="formula-row">
+                            <span class="formula-tag">ANGLE</span>
+                            <div class="math-expr">θᵢ = φ + i × <span class="fraction"><span class="top">360°</span><span class="bottom">n</span></span></div>
+                        </div>
+
+                        <div class="formula-row">
+                            <span class="formula-tag">POSITION</span>
+                            <div class="math-expr">xᵢ = cₓ + r cos θᵢ</div>
+                            <div class="math-expr">yᵢ = cᵧ + r sin θᵢ</div>
+                        </div>
+
+                        <div class="formula-row">
+                            <span class="formula-tag">SPACING (CHORD)</span>
+                            <div class="math-expr">c = 2r sin<span class="paren">(</span><span class="fraction"><span class="top">π</span><span class="bottom">n</span></span><span class="paren">)</span></div>
+                        </div>
+                    </div>
+
+                    <p class="algo-note">We use chord length to determine the safe width of each petal.</p>
+
+                    <button id="geometryVisBtn" class="vis-trigger-btn" type="button">
+                        <div class="vis-btn-left">
+                            <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor" aria-hidden="true">
+                                <path d="M12 15a3 3 0 100-6 3 3 0 000 6z"/>
+                                <path d="M19.4 13a7.86 7.86 0 000-2l2.1-1.6a.5.5 0 00.1-.6l-2-3.5a.5.5 0 00-.6-.2l-2.5 1a7.92 7.92 0 00-1.7-1l-.4-2.6A.5.5 0 0013.9 2h-3.8a.5.5 0 00-.5.5l-.4 2.6a7.92 7.92 0 00-1.7 1l-2.5-1a.5.5 0 00-.6.2l-2 3.5a.5.5 0 00.1.6L4.6 11a7.86 7.86 0 000 2l-2.1 1.6a.5.5 0 00-.1.6l2 3.5a.5.5 0 00.6.2l2.5-1a7.92 7.92 0 001.7 1l.4 2.6a.5.5 0 00.5.5h3.8a.5.5 0 00.5-.5l.4-2.6a7.92 7.92 0 001.7-1l2.5 1a.5.5 0 00.6-.2l2-3.5a.5.5 0 00-.1-.6L19.4 13z"/>
+                            </svg>
+                            <span>GEOMETRY VISUALIZER</span>
+                        </div>
+                        <span class="chevron" aria-hidden="true">›</span>
+                    </button>
+                </section>
+            </aside>
+
+            <!-- CENTER HERO STAGE -->
+            <section class="central-stage" aria-label="Generated Pookalam Artwork">
+                <div class="stage-spotlight" aria-hidden="true"></div>
+                <div class="stage-orbital-ring" aria-hidden="true"></div>
+                <div class="svg-container">
+                    <svg id="pookalam" viewBox="0 0 1000 1000" role="img" aria-label="Procedurally generated floral Pookalam"></svg>
                 </div>
-
-                <div class="terminal-body">
-                    <p>&gt; Initializing Onam Engine...</p>
-                    <p>&gt; Calculating floral symmetry...</p>
-                    <p>&gt; Generating coded petals...</p>
-                    <p class="success">
-                        &gt; Pookalam successfully generated.
-                    </p>
-                </div>
-
             </section>
 
-            <section class="pookalam-section">
-
-                <div class="canvas-wrapper">
-
-                    <svg id="pookalam" viewBox="0 0 600 600" aria-label="Procedurally generated digital Pookalam"></svg>
-
-                </div>
-
-                <div class="controls">
-
-                    <button id="generateBtn">
-                        Generate New Pookalam
-                    </button>
-
-                    <button id="replayBtn" class="secondary">
-                        Replay Bloom
-                    </button>
-
-                </div>
-
-                <div class="stats">
-
-                    <div>
-                        <span>Layers</span>
-                        <strong id="layerCount">0</strong>
+            <!-- RIGHT PANEL: PATTERN STRUCTURE / LAYERS -->
+            <aside class="sidebar-panel right-panel">
+                <section class="ui-card layers-card" aria-labelledby="layersTitle">
+                    <h2 id="layersTitle" class="card-kicker">LAYERS</h2>
+                    <div id="layersList" class="layers-list" role="region" aria-label="Layer Hierarchy">
+                        <!-- Populated dynamically by JavaScript -->
                     </div>
-
-                    <div>
-                        <span>Petals</span>
-                        <strong id="petalCount">0</strong>
-                    </div>
-
-                    <div>
-                        <span>Symmetry</span>
-                        <strong id="symmetryCount">0</strong>
-                    </div>
-
-                </div>
-
-            </section>
-
+                </section>
+            </aside>
         </main>
 
-        <footer>
-            Generated entirely with HTML, CSS & JavaScript.
-        </footer>
+        <!-- BOTTOM STATUS BAR -->
+        <footer class="bottom-bar">
+            <!-- Left: Status indicator -->
+            <div class="status-left">
+                <span id="statusIndicator" class="status-dot is-ready" aria-hidden="true"></span>
+                <span id="statusText">Pattern ready</span>
+            </div>
 
+            <!-- Center: Metadata statistics -->
+            <div class="status-meta">
+                <span>Seed: <strong id="statusSeed">ONAM-2026</strong></span>
+                <span class="sep">•</span>
+                <span>Layers: <strong id="statusLayers">8</strong></span>
+                <span class="sep">•</span>
+                <span>Motifs: <strong id="statusMotifs">480</strong></span>
+                <span class="sep">•</span>
+                <span>Symmetry: <strong id="statusSymmetry">16×</strong></span>
+                <span class="sep">•</span>
+                <span>SVG: <strong>1000×1000</strong></span>
+            </div>
+
+            <!-- Right: Export Action -->
+            <div class="status-actions">
+                <button id="exportSvgBtn" class="btn btn-save" type="button">
+                    <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor" aria-hidden="true">
+                        <path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/>
+                    </svg>
+                    <span>SAVE SVG</span>
+                </button>
+            </div>
+        </footer>
     </div>
 
-    <script src="script.js"></script>
+    <!-- MODAL: INFO MODAL -->
+    <div id="infoModal" class="modal-dialog" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="infoModalTitle">
+        <div class="modal-backdrop"></div>
+        <div class="modal-card">
+            <div class="modal-header">
+                <div>
+                    <span class="card-kicker">ARCHITECTURE & CONTEXT</span>
+                    <h3 id="infoModalTitle" class="modal-title">What is POOKALAM.EXE?</h3>
+                </div>
+                <button id="closeInfoBtn" class="modal-close-btn" type="button" aria-label="Close modal">✕</button>
+            </div>
+            <div class="modal-body">
+                <p><strong>POOKALAM.EXE</strong> is a deterministic generative-art engine that constructs authentic Kerala ceremonial floral Pookalams using pure JavaScript, SVG geometry, and radial mathematics.</p>
+                <div class="info-grid">
+                    <div class="info-stat-card">
+                        <h4>100% Genuine Code</h4>
+                        <p>No pre-rendered raster images, cropped photos, or traced assets. Every petal, blossom, and leaf is procedurally computed at runtime.</p>
+                    </div>
+                    <div class="info-stat-card">
+                        <h4>Deterministic PRNG</h4>
+                        <p>A seed hashing algorithm produces consistent, reproducible radial compositions with curated ceremonial color palettes.</p>
+                    </div>
+                    <div class="info-stat-card">
+                        <h4>Trigonometric Alignment</h4>
+                        <p>Uses polar angle division, Cartesian projections, and chord length calculations ($c = 2r \sin(\pi/n)$) for disciplined floral spacing.</p>
+                    </div>
+                    <div class="info-stat-card">
+                        <h4>Organic Bloom Engine</h4>
+                        <p>Choreographed radial flower opening with separated placement and animation transform hierarchies.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
+    <!-- MODAL: GEOMETRY VISUALIZER -->
+    <div id="visualizerModal" class="modal-dialog" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="visModalTitle">
+        <div class="modal-backdrop"></div>
+        <div class="modal-card visualizer-card">
+            <div class="modal-header">
+                <div>
+                    <span class="card-kicker">STEP-BY-STEP MATHEMATICS</span>
+                    <h3 id="visModalTitle" class="modal-title">How Mathematics Becomes Flowers</h3>
+                </div>
+                <button id="closeVisBtn" class="modal-close-btn" type="button" aria-label="Close visualizer modal">✕</button>
+            </div>
+            <div class="vis-content-layout">
+                <div class="vis-canvas-col">
+                    <svg id="visualizerSvg" viewBox="0 0 400 400" aria-label="Radial geometry demonstration"></svg>
+                </div>
+                <div class="vis-info-col">
+                    <span id="visStepCounter" class="vis-step-badge">Step 1 of 6</span>
+                    <h4 id="visStepTitle" class="vis-step-title">1. Center Coordinate (cx, cy)</h4>
+                    <p id="visStepDesc" class="vis-step-desc">All radial geometry originates from a central anchor point (cx, cy) in Cartesian space.</p>
+                    <div class="vis-formula-box">
+                        <span class="formula-tag">ACTIVE FORMULA</span>
+                        <pre id="visStepFormula">c = (cx, cy) = (200, 200)</pre>
+                    </div>
+                    <div class="vis-controls">
+                        <button id="visPrevBtn" class="btn btn-secondary btn-sm" type="button">‹ PREV</button>
+                        <button id="visPlayBtn" class="btn btn-primary btn-sm" type="button">AUTO PLAY</button>
+                        <button id="visNextBtn" class="btn btn-secondary btn-sm" type="button">NEXT ›</button>
+                        <button id="visResetBtn" class="btn btn-ghost btn-sm" type="button">RESET</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Application Script Module -->
+    <script type="module" src="./js/app.js"></script>
 </body>
 
 </html>
