@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Pookalam.exe</title>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <div class="app">
+
+        <header class="hero">
+            <div class="badge">ONAM × CODE</div>
+
+            <h1>Pookalam.exe</h1>
+
+            <p class="subtitle">
+                A procedurally generated digital Pookalam built with code.
+            </p>
+        </header>
+
+        <main class="main-panel">
+
+            <section class="terminal">
+
+                <div class="terminal-top">
+                    <span class="dot red"></span>
+                    <span class="dot yellow"></span>
+                    <span class="dot green"></span>
+
+                    <span class="terminal-title">
+                        pookalam-engine.exe
+                    </span>
+                </div>
+
+                <div class="terminal-body">
+                    <p>&gt; Initializing Onam Engine...</p>
+                    <p>&gt; Calculating floral symmetry...</p>
+                    <p>&gt; Generating coded petals...</p>
+                    <p class="success">
+                        &gt; Pookalam successfully generated.
+                    </p>
+                </div>
+
+            </section>
+
+            <section class="pookalam-section">
+
+                <div class="canvas-wrapper">
+
+                    <svg id="pookalam" viewBox="0 0 600 600" aria-label="Procedurally generated digital Pookalam"></svg>
+
+                </div>
+
+                <div class="controls">
+
+                    <button id="generateBtn">
+                        Generate New Pookalam
+                    </button>
+
+                    <button id="replayBtn" class="secondary">
+                        Replay Bloom
+                    </button>
+
+                </div>
+
+                <div class="stats">
+
+                    <div>
+                        <span>Layers</span>
+                        <strong id="layerCount">0</strong>
+                    </div>
+
+                    <div>
+                        <span>Petals</span>
+                        <strong id="petalCount">0</strong>
+                    </div>
+
+                    <div>
+                        <span>Symmetry</span>
+                        <strong id="symmetryCount">0</strong>
+                    </div>
+
+                </div>
+
+            </section>
+
+        </main>
+
+        <footer>
+            Generated entirely with HTML, CSS & JavaScript.
+        </footer>
+
+    </div>
+
+    <script src="script.js"></script>
+
+</body>
+
+</html>
